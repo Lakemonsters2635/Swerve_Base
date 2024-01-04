@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import javax.lang.model.util.ElementScanner14;
+
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.math.MathUtil;
@@ -111,24 +113,60 @@ public class DrivetrainSubsystem extends SubsystemBase {
       //Hat Power Overides for Trimming Position and Rotation
       hatJoystickTrimPosition = RobotContainer.rightJoystick;
       hatJoystickTrimRotationArm = RobotContainer.leftJoystick;
-      if(hatJoystickTrimPosition.getPOV()==Constants.HAT_POV_MOVE_FORWARD){
-        xPowerCommanded = Constants.HAT_POWER_MOVE;
-      }
-      if(hatJoystickTrimPosition.getPOV()==Constants.HAT_POV_MOVE_BACK){
-        xPowerCommanded = Constants.HAT_POWER_MOVE*-1.0;
-      }
-      if(hatJoystickTrimPosition.getPOV()==Constants.HAT_POV_MOVE_RIGHT){
-        yPowerCommanded = Constants.HAT_POWER_MOVE*-1.0;
-      }
-      if(hatJoystickTrimPosition.getPOV()==Constants.HAT_POV_MOVE_LEFT){
+      if(hatJoystickTrimPosition.getPOV()==Constants.HAT_POV_MOVE_FORWARD ){
         yPowerCommanded = Constants.HAT_POWER_MOVE;
       }
+      else if(hatJoystickTrimPosition.getPOV()==Constants.HAT_POV_MOVE_BACK){
+        yPowerCommanded = Constants.HAT_POWER_MOVE*-1.0;
+      }
+      else if(hatJoystickTrimPosition.getPOV()==Constants.HAT_POV_MOVE_RIGHT){
+        xPowerCommanded = Constants.HAT_POWER_MOVE;
+      }
+      else if(hatJoystickTrimPosition.getPOV()==Constants.HAT_POV_MOVE_LEFT){
+        xPowerCommanded = Constants.HAT_POWER_MOVE*-1.0;
+      }
+      // else{
+      //   yPowerCommanded =0;
+      //   xPowerCommanded =0;
+      // }
+
       if(hatJoystickTrimRotationArm.getPOV()==Constants.HAT_POV_ROTATE_RIGHT){
         rotCommanded = Constants.HAT_POWER_ROTATE*-1.0;
       }
-      if(hatJoystickTrimRotationArm.getPOV()==Constants.HAT_POV_ROTATE_LEFT){
+      else if(hatJoystickTrimRotationArm.getPOV()==Constants.HAT_POV_ROTATE_LEFT){
         rotCommanded = Constants.HAT_POWER_ROTATE;
       }
+      // else{
+      //   rotCommanded = 0;
+      // }
+
+
+
+      if(hatJoystickTrimPosition.getPOV()==-1){
+        yPowerCommanded= 0;
+        xPowerCommanded= 0;
+      }
+
+      if(hatJoystickTrimRotationArm.getPOV()==-1){
+        rotCommanded = 0;
+      }
+
+      if (hatJoystickTrimPosition.getY()>0.05 || hatJoystickTrimPosition.getY()<-0.05) {
+        yPowerCommanded = hatJoystickTrimPosition.getY() * Constants.FIX_JOYSTICK_SPEED *-1;
+      }
+
+      if (hatJoystickTrimPosition.getX()>0.05 || hatJoystickTrimPosition.getX()<-0.05) {
+        xPowerCommanded = hatJoystickTrimPosition.getX() * Constants.FIX_JOYSTICK_SPEED;
+      }
+
+      if (hatJoystickTrimPosition.getTwist()>0.05 || hatJoystickTrimPosition.getTwist()<-0.05) {
+        rotCommanded = hatJoystickTrimPosition.getTwist() * Constants.FIX_JOYSTICK_SPEED*-1;
+      }
+      
+
+
+      System.out.println(Double.toString(rotCommanded) + "\t" +Double.toString(yPowerCommanded)+ "\t" +Double.toString(xPowerCommanded));
+
       
       this.drive(xPowerCommanded * DrivetrainSubsystem.kMaxSpeed, 
                  yPowerCommanded * DrivetrainSubsystem.kMaxSpeed,
